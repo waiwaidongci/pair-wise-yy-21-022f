@@ -8,6 +8,7 @@ export const createDefaultCrew = (overrides: Partial<Crew> = {}): Crew => ({
   duty_status: "ASSIGNED" as never,
   current_ticket_id: 1 as never,
   contact_phone: "13800000001" as never,
+  capacity: 3 as never,
   ...overrides
 });
 

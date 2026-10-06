@@ -6,6 +6,8 @@ COPY . .
 RUN npm run build
 FROM node:20-alpine
 WORKDIR /app
+ENV DISPATCH_DATA_DIR=/app/data
+RUN mkdir -p /app/data
 COPY package*.json ./
 RUN npm install --omit=dev
 COPY --from=build /app/dist ./dist

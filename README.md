@@ -21,6 +21,31 @@ cp .env.example .env && docker compose up -d
 - 后端：进入 `backend` 后按技术栈运行开发命令，接口统一挂在 `/api`。
 
 
+## 可续作调度台（核心特性）
+
+供电所不再只有静态工单卡片。`/tickets` 页面是「可续作调度台」，把抢修工单、抢修班组和备件领用接成同一个状态面板，后端持久化调度状态，重开页面队列、占用和待对账记录都在。
+
+- **按技能 / 在手任务 / 备件判断能否接单**：点「评估接单能力」，后端 `DispatchService.evaluateCrew` 综合班组技能标签、在手任务数（容量）、所需备件库存给出可接单判断与未满足原因。
+- **容量不足先排队**：技能不符、在手任务已满或备件不足时不占名额，工单进入排队队列并记录原因。
+- **派工确认占用名额**：`confirmDispatch` 以同步「读取—判断—写入」原子创建 `DispatchOccupancy`（状态 `HELD`），占用名额。
+- **两个调度员同时确认同一单放行一个**：并发控制在占用写入前先查 `HELD` 记录，后到的调度员收到 `409 CONFLICT` 并看到占用者（班组 + 调度员）。右上角可切换调度员 `#1/#2` 模拟。
+- **断网保留回传，网络恢复合并**：班组回传先存浏览器 `localStorage` 离线队列，恢复网络后 `POST /api/dispatch/sync` 按 `client_id` 幂等合并；重复回传去重。
+- **改派后旧回传失效进入待对账**：`reassign` 释放旧占用、把旧班组回传置为 `INVALID` 并写入 `PendingReconciliation`；改派成功后旧班组再补传也会被判失效。
+- **重开页面都在**：队列、占用、待对账由后端文件存储持久化（`DISPATCH_DATA_DIR`，Compose 中挂命名卷 `dispatch_data` 到 `/app/data`），重启后端 / 刷新页面后状态不丢。
+
+关键文件：
+
+| 层 | 文件 |
+|---|---|
+| 后端服务 | `backend/src/services/DispatchService.ts` |
+| 后端持久化 | `backend/src/repositories/FileStore.ts`、`DispatchRepository.ts` |
+| 后端接口 | `backend/src/controllers/DispatchController.ts`、`backend/src/routes/DispatchRoutes.ts` |
+| 后端模型 | `backend/src/models/DispatchQueue.ts`、`DispatchOccupancy.ts`、`CrewCallback.ts`、`PendingReconciliation.ts` |
+| 前端面板 | `frontend/src/components/dispatch/DispatchConsole.vue`、`CrewCard.vue`、`QueuePanel.vue`、`ReconciliationPanel.vue`、`CallbackPanel.vue` |
+| 前端状态 | `frontend/src/stores/DispatchStore.ts`、`frontend/src/hooks/useOfflineSync.ts` |
+
+接口：`GET /api/dispatch/console`、`POST /api/dispatch/evaluate`、`POST /api/dispatch/confirm`、`POST /api/dispatch/reassign`、`POST /api/dispatch/callback`、`POST /api/dispatch/sync`、`POST /api/dispatch/reconciliations/:id/resolve`。
+
 ## 技术栈
 
 | 层 | 技术 |

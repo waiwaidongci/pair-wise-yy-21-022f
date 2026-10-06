@@ -33,8 +33,11 @@ services:
       DB_USER: ${DB_USER:-app_user}
       DB_PASSWORD: ${DB_PASSWORD:-app_password}
       JWT_SECRET: local-dev-secret
+      DISPATCH_DATA_DIR: /app/data
     ports:
       - "${BACKEND_PORT:-21104}:3000"
+    volumes:
+      - dispatch_data:/app/data
     depends_on:
       db:
         condition: service_healthy
@@ -57,3 +60,4 @@ services:
         condition: service_healthy
 volumes:
   db_data:
+  dispatch_data:
