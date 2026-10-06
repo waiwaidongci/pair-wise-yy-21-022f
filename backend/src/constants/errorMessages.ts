@@ -1,1 +1,19 @@
-export const ERROR_MESSAGES = { AUTH_REQUIRED: "missing bearer token", RBAC_DENIED: "role denied", VALIDATION_FAILED: "invalid payload", RATE_LIMITED: "too many requests" };
+export const ERROR_MESSAGES = {
+  AUTH_REQUIRED: "missing bearer token",
+  RBAC_DENIED: "role denied",
+  VALIDATION_FAILED: "invalid payload",
+  RATE_LIMITED: "too many requests",
+  TICKET_NOT_FOUND: "工单不存在",
+  CREW_NOT_FOUND: "班组不存在",
+  TICKET_HELD: "该工单已被其他调度员占用",
+  TICKET_NOT_HOLDABLE: "工单当前状态不可派工",
+  HOLD_REQUIRED: "请先占用该工单再确认派工",
+  CREW_OFF_DUTY: "班组休息中，不可接单",
+  SKILL_MISMATCH: "班组技能不匹配",
+  CREW_CAPACITY_FULL: "班组在手任务已满",
+  PART_SHORTAGE: "备件库存不足",
+  ALREADY_QUEUED: "该工单已在排队队列中",
+  QUEUE_ENTRY_NOT_FOUND: "排队记录不存在或已处理",
+  TICKET_NOT_ACTIVE: "工单不在抢修中，无需改派",
+  RECONCILIATION_NOT_FOUND: "待对账记录不存在或已核销"
+};

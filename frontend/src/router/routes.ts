@@ -1,5 +1,9 @@
 export const routes = [
   {
+    "name": "调度台",
+    "route": "/dispatch"
+  },
+  {
     "name": "抢修态势",
     "route": "/dashboard"
   },

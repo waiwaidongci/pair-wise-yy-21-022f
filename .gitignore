@@ -11,3 +11,6 @@ __pycache__/
 .pytest_cache/
 target/
 vendor/
+
+# dispatch console persisted state
+backend/data/

@@ -26,10 +26,15 @@ CREATE TABLE IF NOT EXISTS repair_ticket (
   fault_report_id TEXT,
   team_id TEXT,
   dispatcher_id TEXT,
+  dispatcher_name TEXT,
   priority TEXT,
   status TEXT,
   assigned_at TEXT,
-  restored_at TEXT
+  restored_at TEXT,
+  required_skill TEXT,
+  required_part_code TEXT,
+  required_part_qty INTEGER,
+  summary TEXT
 );
 
 CREATE TABLE IF NOT EXISTS crew (
@@ -39,7 +44,8 @@ CREATE TABLE IF NOT EXISTS crew (
   skill_tags TEXT,
   duty_status TEXT,
   current_ticket_id TEXT,
-  contact_phone TEXT
+  contact_phone TEXT,
+  max_tasks INTEGER
 );
 
 CREATE TABLE IF NOT EXISTS spare_part_usage (
@@ -51,6 +57,52 @@ CREATE TABLE IF NOT EXISTS spare_part_usage (
   warehouse_name TEXT,
   approved_by TEXT,
   usage_status TEXT
+);
+
+CREATE TABLE IF NOT EXISTS part_stock (
+  part_code TEXT PRIMARY KEY,
+  part_name TEXT,
+  warehouse_name TEXT,
+  stock INTEGER
+);
+
+CREATE TABLE IF NOT EXISTS dispatch_hold (
+  ticket_id INTEGER PRIMARY KEY,
+  dispatcher TEXT,
+  acquired_at TEXT,
+  expires_at TEXT
+);
+
+CREATE TABLE IF NOT EXISTS dispatch_queue (
+  id INTEGER PRIMARY KEY,
+  ticket_id INTEGER,
+  crew_id INTEGER,
+  queued_by TEXT,
+  queued_at TEXT,
+  status TEXT
+);
+
+CREATE TABLE IF NOT EXISTS crew_report (
+  client_report_id TEXT PRIMARY KEY,
+  ticket_id INTEGER,
+  crew_id INTEGER,
+  type TEXT,
+  content TEXT,
+  reported_at TEXT,
+  merged_at TEXT,
+  status TEXT
+);
+
+CREATE TABLE IF NOT EXISTS reconciliation (
+  id INTEGER PRIMARY KEY,
+  report_client_id TEXT,
+  ticket_id INTEGER,
+  crew_id INTEGER,
+  reason TEXT,
+  status TEXT,
+  created_at TEXT,
+  resolved_at TEXT,
+  resolved_by TEXT
 );
 
 CREATE TABLE IF NOT EXISTS audit_log (

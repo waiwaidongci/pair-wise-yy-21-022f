@@ -6,4 +6,5 @@ export interface Crew {
   duty_status: string;
   current_ticket_id: number;
   contact_phone: string;
+  max_tasks: number;
 }
